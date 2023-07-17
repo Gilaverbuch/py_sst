@@ -16,5 +16,8 @@ dependencies = [
     'xarray >= 0.20',
     'tqdm >= 4.64',
     'geopy>=2.0.0',
-    'pydap>=3.3'
+    'nctoolkit>=0.9.4'
+    'cdo>=2.2.0',
+    'cartopy>=0.21.0'
+
 ]
