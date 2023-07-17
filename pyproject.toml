@@ -8,7 +8,7 @@ name = "pysst"
 version = "0.0.1"
 dependencies = [
     "requests",
-    'importlib-metadata; python_version<"3.8"',
+    'importlib-metadata; python_version>"3.7"',
     'matplotlib >= 3.5',
     'notebook >= 6.4',
     'pandas >= 1.4',
@@ -16,8 +16,5 @@ dependencies = [
     'xarray >= 0.20',
     'tqdm >= 4.64',
     'geopy>=2.0.0',
-    'nctoolkit>=0.9.4'
-    'cdo>=2.2.0',
-    'cartopy>=0.21.0'
 
 ]

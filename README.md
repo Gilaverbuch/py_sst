@@ -13,6 +13,12 @@ cd to the package directory and run:
 
 - pip install dist/the_desired_version.whl
 
+- pip install nctoolkit==0.9.4
+
+- conda install -c conda-forge cdo
+
+- conda install -c conda-forge cartopy
+
 
 Dependencies:
 
