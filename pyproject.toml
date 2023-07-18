@@ -14,8 +14,9 @@ dependencies = [
     'pandas',
     'numpy',
     'xarray',
-    'tqdm',
     'geopy',
-    'nctoolkit'
+    'nctoolkit',
+    'cartopy',
+    'cdo'
 
 ]
