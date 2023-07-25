@@ -52,8 +52,12 @@ def load_data_(date):
     dsx2 = dsx2.sortby('time')
 
 
-    print(dsx1)
+    dsx1 = dsx1.sel(time=date, method='nearest')
 
-    print(dsx2)
+    dsx2 = dsx2.sel(time=date, method='nearest')
 
-    return dsx1
+    dsx = dsx1.copy()
+    dsx.mcsst.values = np.nanmean(np.dstack((dsx1.mcsst.values,dsx2.mcsst.values)),2)
+    
+
+    return dsx

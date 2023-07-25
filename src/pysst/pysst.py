@@ -44,5 +44,8 @@ def load_data(date):
 
     dsx = load_data_(date)
 
+    print(dsx)
+    
+    dsx.mcsst.plot(cmap='gnuplot2', clim=(5,35))
 
 
