@@ -21,10 +21,28 @@ plt.rcParams['font.size'] = '16'
 plt.rcParams['figure.dpi'] = 125
 plt.rcParams['figure.facecolor'] = 'white'
 
-import numpy as np
-import pandas as pd
 
 
+from .input.input import load_data_
+
+
+def load_data(date):
+    '''
+    this function loads satelite SST data and returns an xarray object with the data. 
+    
+    parameters
+    ----------
+        date: numpy datetime64 object or array of datetime64 objects
+    
+
+    Returns
+    -------
+    xarray object
+    '''
+
+    print(date)
+
+    dsx = load_data_(date)
 
 
 

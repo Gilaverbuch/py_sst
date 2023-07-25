@@ -17,8 +17,43 @@ Python module to read the .D binary data files
 """
 
 import numpy as np
+import xarray as xr
 import pandas as pd
-from tqdm import tqdm
+import nctoolkit as nc
 
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
+
+
+def load_data_(date):
+    '''
+    this function loads satelite SST data and returns an xarray object with the data. 
+    
+    parameters
+    ----------
+        date: numpy datetime64 object or array of datetime64 objects
+    
+
+    Returns
+    -------
+    xarray object
+    '''
+
+    year = date.astype(object).year
+
+    ds1 = nc.open_thredds('http://tds.maracoos.org/thredds/dodsC/AVHRR/'+str(year)+'/1Agg')
+
+    ds2 = nc.open_thredds('http://basin.ceoe.udel.edu/thredds/dodsC/avhrr_unfiltered_sst.nc')
+
+    dsx1 = ds1.to_xarray()
+    dsx1 = dsx1.sortby('time')
+
+    dsx2 = ds2.to_xarray()
+    dsx2 = dsx2.sortby('time')
+
+
+    print(dsx1)
+
+    print(dsx2)
+
+    return dsx1
