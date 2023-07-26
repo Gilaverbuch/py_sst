@@ -26,26 +26,27 @@ plt.rcParams['figure.facecolor'] = 'white'
 from .input.input import load_data_
 
 
-def load_data(date):
+def load_data(date, d_day=0, n_day=0, d_hour=0, n_hour=0):
     '''
     this function loads satelite SST data and returns an xarray object with the data. 
     
     parameters
     ----------
         date: numpy datetime64 object or array of datetime64 objects
-    
+        d_day: day intervals after date
+        n_day: number of day intervals 
+        d_hour: number of hours following date
+        n_hour: number of hour intervals
 
     Returns
     -------
     xarray object
     '''
 
-    print(date)
+    print(date, d_day, n_day, d_hour, n_hour)
 
-    dsx = load_data_(date)
+    sst = load_data_(date)
 
-    print(dsx)
-    
-    dsx.mcsst.plot(cmap='gnuplot2', clim=(5,35))
+    return sst
 
 

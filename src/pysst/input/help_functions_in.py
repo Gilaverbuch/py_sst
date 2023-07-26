@@ -29,3 +29,24 @@ import pandas as pd
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
 
+def select_data_(dsx_, date, d_day, n_day, d_hour, n_hour):
+    '''
+    this function selects data from the SST archive based on the selected time parameters. 
+    
+    parameters
+    ----------
+        dsx_: SST archive data.
+        date: numpy datetime64 object or array of datetime64 objects
+        d_day: day intervals after date
+        n_day: number of day intervals 
+        d_hour: number of hours following date
+        n_hour: number of hour intervals
+    
+
+    Returns
+    -------
+    xarray object
+    '''
+
+
+
