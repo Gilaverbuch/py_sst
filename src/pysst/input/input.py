@@ -18,17 +18,15 @@ Python module to read the .D binary data files
 
 import numpy as np
 import xarray as xr
-import pandas as pd
-
 import nctoolkit as nc
 
 
-from .help_functions_in import select_data_
+# from .help_functions_in future_func
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
 
 
-def load_data_(date_i, date_f=0):
+def load_data_(date_i, date_f=None):
     '''
     this function loads satelite SST data and returns an xarray object with the data. 
     
@@ -48,10 +46,6 @@ def load_data_(date_i, date_f=0):
 
     year = date_i.astype(object).year
 
-    if date_f!=0:
-        date_f = np.datetime64(date_f)
-
-
 
     ds1 = nc.open_thredds('http://tds.maracoos.org/thredds/dodsC/AVHRR/'+str(year)+'/1Agg')
 
@@ -61,7 +55,6 @@ def load_data_(date_i, date_f=0):
         dsx1 = ds1.to_xarray()
         dsx1 = dsx1.sortby('time')
 
-        dsx1 = select_data_(dsx1, date, d_day, n_day, d_hour, n_hour)
     except:
         print('first source does not have data for this year')
 
@@ -72,15 +65,26 @@ def load_data_(date_i, date_f=0):
         print('second source does not have data for this year')
 
 
-    dsx1 = dsx1.sel(time=date, method='nearest')
 
-    dsx2 = dsx2.sel(time=date, method='nearest')
+    if date_f is not None:
+        print ('Selecting data in time range', date_i, '--', date_f)
+        dsx1 = dsx1.sel(time=slice(date_i, date_f))
+        dsx2 = dsx2.sel(time=slice(date_i, date_f))
+    else:
+        print ('Selecting data closest to', date_i)
+        dsx1 = dsx1.sel(time=date_i, method='nearest')
+        dsx2 = dsx2.sel(time=date_i, method='nearest')
 
-    dsx = dsx1.copy()
-    dsx.mcsst.values = np.nanmean(np.dstack((dsx1.mcsst.values,dsx2.mcsst.values)),2)
+
+    print('loading first source...')
+    dsx1.load()
+
+    print('loading second source...')
+    dsx2.load()
+
     
 
-    return dsx
+    return [dsx1, dsx2]
 
 
 
