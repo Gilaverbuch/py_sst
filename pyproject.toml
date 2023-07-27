@@ -11,12 +11,8 @@ dependencies = [
     'importlib-metadata; python_version>"3.7"',
     'matplotlib',
     'notebook',
-    'pandas',
     'numpy',
     'xarray',
     'geopy',
-    'nctoolkit',
-    'cartopy',
-    'cdo'
 
 ]
