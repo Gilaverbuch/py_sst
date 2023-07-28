@@ -23,10 +23,10 @@ plt.rcParams['figure.facecolor'] = 'white'
 
 
 
-from .input.input import load_data_
+from .input.input import load_data_, merge_data_
 
 
-def load_data(date_i, date_f=None):
+def load_data(date_i, date_f = None, merge = True):
     '''
     this function loads satelite SST data and returns an xarray object with the data. 
     
@@ -34,13 +34,17 @@ def load_data(date_i, date_f=None):
     ----------
         date_i: initial time as numpy datetime64 object or array of datetime64 objects
         date_f: Default is None unless final time is given as numpy datetime64 object or array of datetime64 objects. 
+        merge: merge data sets from various sources. Default is True.
 
     Returns
     -------
     xarray object
     '''
-
+    
     sst = load_data_(date_i, date_f)
+
+    if merge is True:
+        sst = merge_data_(sst)
 
     return sst
 

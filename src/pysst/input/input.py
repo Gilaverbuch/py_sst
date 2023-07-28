@@ -87,6 +87,60 @@ def load_data_(date_i, date_f=None):
     return [dsx1, dsx2]
 
 
+# -------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
+
+
+def merge_data_(sst_):
+    '''
+    this function merges sst data from both datasets
+    
+    parameters
+    ----------
+        sst_: array of xarray datasets containing sst data
+    
+
+    Returns
+    -------
+    xarray object
+    '''
+    if sst_[0].time.size > 1:
+        for t in range(0, sst_[0].time.size):
+            sst_temp = sst_[0].isel(time=t).copy()
+            a_ = []
+            for i in range(0, len(sst_)):
+                a_.append(sst_[i].isel(time=t).mcsst.values)
+            temp = np.nanmean(np.dstack((a_)),len(sst_))
+            sst_temp.mcsst.values = temp
+            
+            try:
+                sst_comb = xr.concat([sst_comb,sst_temp], 'time')
+            except:
+                sst_comb = sst_temp.copy()
+    else:
+
+        sst_comb = sst_[0].copy()
+        a_ = []
+        for i in range(0, len(sst_)):
+            a_.append(sst_[i].mcsst.values)
+        temp = np.nanmean(np.dstack((a_)),len(sst_))
+        sst_comb.mcsst.values = temp
+        
+
+
+
+
+    
+    
+    sst_comb = sst_comb.assign(mcsst_source1 = sst_[0].mcsst)
+    sst_comb = sst_comb.assign(mcsst_source2 = sst_[1].mcsst)
+
+
+    
+
+    return sst_comb
+
+
 
 
 
