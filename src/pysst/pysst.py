@@ -24,9 +24,10 @@ plt.rcParams['figure.facecolor'] = 'white'
 
 
 from .input.input import load_data_, merge_data_
+from .output.output import write_to_nc_
 
 
-def load_data(date_i, date_f = None, merge = True):
+def load_data(date_i, date_f=None, merge=True):
     '''
     this function loads satelite SST data and returns an xarray object with the data. 
     
@@ -51,7 +52,7 @@ def load_data(date_i, date_f = None, merge = True):
 
 
 class SST(object):
-    def __init__(self, date_i = None, date_f = None):
+    def __init__(self, date_i=None, date_f=None):
 
         self.date_i = date_i
         self.date_f = date_f
@@ -94,6 +95,24 @@ class SST(object):
         '''
         
         self.sst = merge_data_(self.sst)
+
+
+    def write_to_nc(self, path=None):
+        '''
+        This function saves the data to netCDF file.
+
+        parameters
+        ----------
+            path: path to save the results. If None, it wil save it in the Results directory.
+
+
+        '''
+
+        write_to_nc_(self.sst, path)
+
+        
+
+
 
 
 
