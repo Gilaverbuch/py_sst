@@ -9,7 +9,7 @@ In a conda environment run:
 
 - pip install build (A simple, correct PEP 517 build frontend. It will build the .whl and .tar.gz for the pip install)
 
-* For some reason the nctoolkit, cdo, and cartopy are not installed properly via pip install .whl, so please install the separately. 
+For some reason the nctoolkit, cdo, and cartopy are not installed properly via pip install .whl, so please install the separately. 
 
 - pip install nctoolkit==0.9.4
 
