@@ -26,7 +26,7 @@ import nctoolkit as nc
 # -------------------------------------------------------------------------------------------------
 
 
-def load_data_(date_i, date_f=None):
+def load_data_(date_i, date_f, lat_min, lat_max, lon_min, lon_max):
     '''
     this function loads satelite SST data and returns an xarray object with the data. 
     
@@ -44,44 +44,61 @@ def load_data_(date_i, date_f=None):
     xarray object
     '''
 
-    year = date_i.astype(object).year
+
+    if date_i is not None:
+
+        year = date_i.astype(object).year
 
 
-    ds1 = nc.open_thredds('http://tds.maracoos.org/thredds/dodsC/AVHRR/'+str(year)+'/1Agg')
+        ds1 = nc.open_thredds('http://tds.maracoos.org/thredds/dodsC/AVHRR/'+str(year)+'/1Agg')
 
-    ds2 = nc.open_thredds('http://basin.ceoe.udel.edu/thredds/dodsC/avhrr_unfiltered_sst.nc')
+        ds2 = nc.open_thredds('http://basin.ceoe.udel.edu/thredds/dodsC/avhrr_unfiltered_sst.nc')
 
-    try:
-        dsx1 = ds1.to_xarray()
-        dsx1 = dsx1.sortby('time')
+        try:
+            dsx1 = ds1.to_xarray()
+            dsx1 = dsx1.sortby('time')
 
-    except:
-        print('first source does not have data for this year')
+        except:
+            print('first source does not have data for this year')
 
-    try:
-        dsx2 = ds2.to_xarray()
-        dsx2 = dsx2.sortby('time')
-    except:
-        print('second source does not have data for this year')
+        try:
+            dsx2 = ds2.to_xarray()
+            dsx2 = dsx2.sortby('time')
+        except:
+            print('second source does not have data for this year')
 
 
 
-    if date_f is not None:
-        print ('Selecting data in time range', date_i, '--', date_f)
-        dsx1 = dsx1.sel(time=slice(date_i, date_f))
-        dsx2 = dsx2.sel(time=slice(date_i, date_f))
+        if date_f is not None:
+            print ('Selecting data in time range', date_i, '--', date_f)
+            dsx1 = dsx1.sel(time=slice(date_i, date_f))
+            dsx2 = dsx2.sel(time=slice(date_i, date_f))
+        else:
+            print ('Selecting data closest to', date_i)
+            dsx1 = dsx1.sel(time=date_i, method='nearest')
+            dsx2 = dsx2.sel(time=date_i, method='nearest')
+
+        if lat_min is not None and lat_max is not None and lon_min is not None and lon_max is not None:
+            print('selecting data in lat-lon coordinate range')
+            dsx1 = dsx1.sel(lat=slice(lat_min, lat_max))
+            dsx2 = dsx2.sel(lat=slice(lat_min, lat_max))
+
+            dsx1 = dsx1.sel(lon=slice(lon_min, lon_max))
+            dsx2 = dsx2.sel(lon=slice(lon_min, lon_max))
+
+        else:
+            print('One or more of the min/max lat-lon coordinates is missing . Retrieving all...')
+
+        print('loading first source...')
+        dsx1.load()
+
+        print('loading second source...')
+        dsx2.load()
+
     else:
-        print ('Selecting data closest to', date_i)
-        dsx1 = dsx1.sel(time=date_i, method='nearest')
-        dsx2 = dsx2.sel(time=date_i, method='nearest')
-
-
-    print('loading first source...')
-    dsx1.load()
-
-    print('loading second source...')
-    dsx2.load()
-
+        print('Initial date is missing. Please provide date_i')
+        dsx1 = None
+        dsx2 = None
     
 
     return [dsx1, dsx2]
