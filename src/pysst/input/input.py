@@ -108,7 +108,6 @@ def merge_data_(sst_):
 
         for i in range(0, len(sst_)):
             name_ = 'mcsst_source'+str(i+1)
-            print(name_)
             sst_comb[name_] = sst_[i].mcsst
         
         
