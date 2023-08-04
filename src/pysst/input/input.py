@@ -106,10 +106,12 @@ def merge_data_(sst_):
 
 
 
+        for i in range(0, len(sst_)):
+            name_ = 'mcsst_source'+str(i+1)
+            print(name_)
+            sst_comb[name_] = sst_[i].mcsst
         
         
-        sst_comb = sst_comb.assign(mcsst_source1 = sst_[0].mcsst)
-        sst_comb = sst_comb.assign(mcsst_source2 = sst_[1].mcsst)
 
     else:
         sst_comb = sst_[0].copy()
