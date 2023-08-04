@@ -36,6 +36,7 @@ def load_data(date_i, date_f=None, merge=True):
         date_i: initial time as numpy datetime64 object or array of datetime64 objects
         date_f: Default is None unless final time is given as numpy datetime64 object or array of datetime64 objects. 
         merge: merge data sets from various sources. Default is True.
+        area: area to get data for. Currentlty gets 'mid-atlantic' (1X1 km grid) or 'global' (4X4 km grid) 
 
     Returns
     -------
@@ -52,7 +53,7 @@ def load_data(date_i, date_f=None, merge=True):
 
 
 class SST(object):
-    def __init__(self, date_i=None, date_f=None, lat_min=None, lat_max=None, lon_min=None, lon_max=None):
+    def __init__(self, date_i=None, date_f=None, lat_min=None, lat_max=None, lon_min=None, lon_max=None, area='mid-atlantic'):
 
         self.date_i = date_i
         self.date_f = date_f
@@ -60,6 +61,7 @@ class SST(object):
         self.lat_max = lat_max 
         self.lon_min = lon_min
         self.lon_max = lon_max
+        self.area = area
 
 
     def load_data(self):
@@ -70,18 +72,18 @@ class SST(object):
         ----------
             date_i: initial time as numpy datetime64 object or array of datetime64 objects
             date_f: Default is None unless final time is given as numpy datetime64 object or array of datetime64 objects. 
-            self.lat_min: min coordinate. Default is None
-            self.lat_max: max coordinate. Default is None
-            self.lon_min: min coordinate. Default is None
-            self.lon_max: max coordinate. Default is None
-            merge: merge data sets from various sources. Default is True.
+            lat_min: min coordinate. Default is None
+            lat_max: max coordinate. Default is None
+            lon_min: min coordinate. Default is None
+            lon_max: max coordinate. Default is None
+            area: area to get data for. Currentlty gets 'mid-atlantic' (1X1 km grid) or 'global' (4X4 km grid) 
 
         Returns
         -------
         xarray object
         '''
         
-        self.sst = load_data_(self.date_i, self.date_f, self.lat_min, self.lat_max, self.lon_min, self.lon_max)
+        self.sst = load_data_(self.date_i, self.date_f, self.lat_min, self.lat_max, self.lon_min, self.lon_max, self.area)
 
         # if merge is True:
         #     sst = merge_data_(sst)

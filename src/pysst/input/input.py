@@ -20,23 +20,24 @@ import numpy as np
 import xarray as xr
 import nctoolkit as nc
 
-
-# from .help_functions_in future_func
+from .help_functions_in import load_data_mid_atl_
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
 
 
-def load_data_(date_i, date_f, lat_min, lat_max, lon_min, lon_max):
+def load_data_(date_i, date_f, lat_min, lat_max, lon_min, lon_max, area):
     '''
     this function loads satelite SST data and returns an xarray object with the data. 
     
     parameters
     ----------
-        date: numpy datetime64 object or array of datetime64 objects
-        d_day: day intervals after date
-        n_day: number of day intervals 
-        d_hour: number of hours following date
-        n_hour: number of hour intervals
+        date_i: initial time as numpy datetime64 object or array of datetime64 objects
+        date_f: Default is None unless final time is given as numpy datetime64 object or array of datetime64 objects. 
+        lat_min: min coordinate. Default is None
+        lat_max: max coordinate. Default is None
+        lon_min: min coordinate. Default is None
+        lon_max: max coordinate. Default is None
+        area: area to get data for. Currentlty gets 'mid-atlantic' (1X1 km grid) or 'global' (4X4 km grid) 
     
 
     Returns
@@ -47,78 +48,15 @@ def load_data_(date_i, date_f, lat_min, lat_max, lon_min, lon_max):
 
     if date_i is not None:
 
-        year = date_i.astype(object).year
+        if area=='mid-atlantic':
 
-        ds_ = []
+            ds_ = load_data_mid_atl_(date_i, date_f, lat_min, lat_max, lon_min, lon_max)
 
-        # First source
-        try:
-            ds1 = nc.open_thredds('http://tds.maracoos.org/thredds/dodsC/AVHRR/'+str(year)+'/1Agg')
-            dsx1 = ds1.to_xarray()
-            dsx1 = dsx1.sortby('time')
+        elif area=='global':
 
-            ds_.append(dsx1)
-
-        except:
-            print('first source does not have data for this year')
-
-        # # Second source
-        # if dsx1 is not None:
-        #     try:
-        #         ds1 = nc.open_thredds('https://tds.maracoos.org/thredds/dodsC/AVHRR.nc')
-        #         dsx1 = ds1.to_xarray()
-        #         dsx1 = dsx1.sortby('time')
-
-        #         ds_.append(dsx1)
-
-        #     except:
-        #         print('second source does not have data for this year')
-
-        # Second source
-        try:
-            ds2 = nc.open_thredds('http://basin.ceoe.udel.edu/thredds/dodsC/avhrr_unfiltered_sst.nc')
-            dsx2 = ds2.to_xarray()
-            dsx2 = dsx2.sortby('time')
-
-            ds_.append(dsx2)
-        except:
-            print('second source does not have data for this year')
-
-
-
-        if date_f is not None:
-            print ('Selecting data in time range', date_i, '--', date_f)
-
-            for i in range(0,len(ds_)):
-                ds_[i] = ds_[i].sel(time=slice(date_i, date_f))
-
-        else:
-            print ('Selecting data closest to', date_i)
-
-            for i in range(0,len(ds_)):
-                ds_[i] = ds_[i].sel(time=date_i, method='nearest')
-
-
-        if lat_min is not None and lat_max is not None and lon_min is not None and lon_max is not None:
-            print('selecting data in lat-lon coordinate range')
-
-            for i in range(0,len(ds_)):
-                ds_[i] = ds_[i].sel(lat=slice(lat_min, lat_max))
-
-            for i in range(0,len(ds_)):
-                ds_[i] = ds_[i].sel(lon=slice(lon_min, lon_max))
-
-
-        else:
-            print('One or more of the min/max lat-lon coordinates is missing . Retrieving all...')
-
-        print('loading data....')
-        for i in range(0,len(ds_)):
-                ds_[i].load()
-
-
-    else:
-        print('Initial date is missing. Please provide date_i')
+            print('this functionality is not working yet')
+            print('please wait a few days...')
+            ds_ = None
     
 
     return ds_
