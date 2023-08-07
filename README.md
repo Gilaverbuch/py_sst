@@ -1,7 +1,7 @@
 # py_sst
 Python tool to download Sea Surface Temperature. 
-For now, it is retrieving data from http://basin.ceoe.udel.edu/thredds and http://tds.maracoos.org/thredds/ .
-The spatial cover is [20,52,-100, -50] (lat/lon).
+For now, it is retrieving data from http://basin.ceoe.udel.edu/thredds ,  http://tds.maracoos.org/thredds/ , 
+
 
 In a conda environment run:
 

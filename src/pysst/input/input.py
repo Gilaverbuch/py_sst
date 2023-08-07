@@ -20,23 +20,24 @@ import numpy as np
 import xarray as xr
 import nctoolkit as nc
 
-
-# from .help_functions_in future_func
+from .help_functions_in import load_data_mid_atl_
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
 
 
-def load_data_(date_i, date_f, lat_min, lat_max, lon_min, lon_max):
+def load_data_(date_i, date_f, lat_min, lat_max, lon_min, lon_max, area):
     '''
     this function loads satelite SST data and returns an xarray object with the data. 
     
     parameters
     ----------
-        date: numpy datetime64 object or array of datetime64 objects
-        d_day: day intervals after date
-        n_day: number of day intervals 
-        d_hour: number of hours following date
-        n_hour: number of hour intervals
+        date_i: initial time as numpy datetime64 object or array of datetime64 objects
+        date_f: Default is None unless final time is given as numpy datetime64 object or array of datetime64 objects. 
+        lat_min: min coordinate. Default is None
+        lat_max: max coordinate. Default is None
+        lon_min: min coordinate. Default is None
+        lon_max: max coordinate. Default is None
+        area: area to get data for. Currentlty gets 'mid-atlantic' (1X1 km grid) or 'global' (4X4 km grid) 
     
 
     Returns
@@ -47,61 +48,18 @@ def load_data_(date_i, date_f, lat_min, lat_max, lon_min, lon_max):
 
     if date_i is not None:
 
-        year = date_i.astype(object).year
+        if area=='mid-atlantic':
 
+            ds_ = load_data_mid_atl_(date_i, date_f, lat_min, lat_max, lon_min, lon_max)
 
-        ds1 = nc.open_thredds('http://tds.maracoos.org/thredds/dodsC/AVHRR/'+str(year)+'/1Agg')
+        elif area=='global':
 
-        ds2 = nc.open_thredds('http://basin.ceoe.udel.edu/thredds/dodsC/avhrr_unfiltered_sst.nc')
-
-        try:
-            dsx1 = ds1.to_xarray()
-            dsx1 = dsx1.sortby('time')
-
-        except:
-            print('first source does not have data for this year')
-
-        try:
-            dsx2 = ds2.to_xarray()
-            dsx2 = dsx2.sortby('time')
-        except:
-            print('second source does not have data for this year')
-
-
-
-        if date_f is not None:
-            print ('Selecting data in time range', date_i, '--', date_f)
-            dsx1 = dsx1.sel(time=slice(date_i, date_f))
-            dsx2 = dsx2.sel(time=slice(date_i, date_f))
-        else:
-            print ('Selecting data closest to', date_i)
-            dsx1 = dsx1.sel(time=date_i, method='nearest')
-            dsx2 = dsx2.sel(time=date_i, method='nearest')
-
-        if lat_min is not None and lat_max is not None and lon_min is not None and lon_max is not None:
-            print('selecting data in lat-lon coordinate range')
-            dsx1 = dsx1.sel(lat=slice(lat_min, lat_max))
-            dsx2 = dsx2.sel(lat=slice(lat_min, lat_max))
-
-            dsx1 = dsx1.sel(lon=slice(lon_min, lon_max))
-            dsx2 = dsx2.sel(lon=slice(lon_min, lon_max))
-
-        else:
-            print('One or more of the min/max lat-lon coordinates is missing . Retrieving all...')
-
-        print('loading first source...')
-        dsx1.load()
-
-        print('loading second source...')
-        dsx2.load()
-
-    else:
-        print('Initial date is missing. Please provide date_i')
-        dsx1 = None
-        dsx2 = None
+            print('this functionality is not working yet')
+            print('please wait a few days...')
+            ds_ = None
     
 
-    return [dsx1, dsx2]
+    return ds_
 
 
 # -------------------------------------------------------------------------------------------------
@@ -121,38 +79,41 @@ def merge_data_(sst_):
     -------
     xarray object
     '''
-    if sst_[0].time.size > 1:
-        for t in range(0, sst_[0].time.size):
-            sst_temp = sst_[0].isel(time=t).copy()
+    if len(sst_) > 1:
+        if sst_[0].time.size > 1:
+            for t in range(0, sst_[0].time.size):
+                sst_temp = sst_[0].isel(time=t).copy()
+                a_ = []
+                for i in range(0, len(sst_)):
+                    a_.append(sst_[i].isel(time=t).mcsst.values)
+                temp = np.nanmean(np.dstack((a_)),len(sst_))
+                sst_temp.mcsst.values = temp
+                
+                try:
+                    sst_comb = xr.concat([sst_comb,sst_temp], 'time')
+                except:
+                    sst_comb = sst_temp.copy()
+        else:
+
+            sst_comb = sst_[0].copy()
             a_ = []
             for i in range(0, len(sst_)):
-                a_.append(sst_[i].isel(time=t).mcsst.values)
+                a_.append(sst_[i].mcsst.values)
             temp = np.nanmean(np.dstack((a_)),len(sst_))
-            sst_temp.mcsst.values = temp
+            sst_comb.mcsst.values = temp
             
-            try:
-                sst_comb = xr.concat([sst_comb,sst_temp], 'time')
-            except:
-                sst_comb = sst_temp.copy()
-    else:
 
-        sst_comb = sst_[0].copy()
-        a_ = []
+
+
+
         for i in range(0, len(sst_)):
-            a_.append(sst_[i].mcsst.values)
-        temp = np.nanmean(np.dstack((a_)),len(sst_))
-        sst_comb.mcsst.values = temp
+            name_ = 'mcsst_source'+str(i+1)
+            sst_comb[name_] = sst_[i].mcsst
+        
         
 
-
-
-
-    
-    
-    sst_comb = sst_comb.assign(mcsst_source1 = sst_[0].mcsst)
-    sst_comb = sst_comb.assign(mcsst_source2 = sst_[1].mcsst)
-
-
+    else:
+        sst_comb = sst_[0].copy()
     
 
     return sst_comb
