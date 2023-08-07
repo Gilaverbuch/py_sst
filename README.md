@@ -1,7 +1,7 @@
 # py_sst
 Python tool to download Sea Surface Temperature. 
-For now, it is retrieving data from http://basin.ceoe.udel.edu/thredds ,  http://tds.maracoos.org/thredds/ , 
-
+Mid-Atlantic (1km X 1km) is retrieved from http://basin.ceoe.udel.edu/thredds ,  http://tds.maracoos.org/thredds/ , 
+Global data (4kn X 4km) is retrieved from https://www.ncei.noaa.gov/products/avhrr-pathfinder-sst 
 
 In a conda environment run:
 
