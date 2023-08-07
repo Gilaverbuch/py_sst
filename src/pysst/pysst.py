@@ -104,7 +104,7 @@ class SST(object):
         xarray object
         '''
         
-        self.sst = merge_data_(self.sst)
+        self.sst = merge_data_(self.sst, self.area)
 
 
     def write_to_nc(self, path=None):

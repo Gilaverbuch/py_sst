@@ -20,7 +20,7 @@ import numpy as np
 import xarray as xr
 import nctoolkit as nc
 
-from .help_functions_in import load_data_mid_atl_
+from .help_functions_in import load_data_mid_atl_, load_data_global_
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
 
@@ -54,9 +54,7 @@ def load_data_(date_i, date_f, lat_min, lat_max, lon_min, lon_max, area):
 
         elif area=='global':
 
-            print('this functionality is not working yet')
-            print('please wait a few days...')
-            ds_ = None
+            ds_ = load_data_global_(date_i, date_f, lat_min, lat_max, lon_min, lon_max)
     
 
     return ds_
@@ -66,7 +64,7 @@ def load_data_(date_i, date_f, lat_min, lat_max, lon_min, lon_max, area):
 # -------------------------------------------------------------------------------------------------
 
 
-def merge_data_(sst_):
+def merge_data_(sst_, area):
     '''
     this function merges sst data from both datasets
     
@@ -79,42 +77,58 @@ def merge_data_(sst_):
     -------
     xarray object
     '''
-    if len(sst_) > 1:
-        if sst_[0].time.size > 1:
-            for t in range(0, sst_[0].time.size):
-                sst_temp = sst_[0].isel(time=t).copy()
+
+    if area=='mid-atlantic':
+
+        if len(sst_) > 1:
+            if sst_[0].time.size > 1:
+                for t in range(0, sst_[0].time.size):
+                    sst_temp = sst_[0].isel(time=t).copy()
+                    a_ = []
+                    for i in range(0, len(sst_)):
+                        a_.append(sst_[i].isel(time=t).mcsst.values)
+                    temp = np.nanmean(np.dstack((a_)),len(sst_))
+                    sst_temp.mcsst.values = temp
+                    
+                    try:
+                        sst_comb = xr.concat([sst_comb,sst_temp], 'time')
+                    except:
+                        sst_comb = sst_temp.copy()
+            else:
+
+                sst_comb = sst_[0].copy()
                 a_ = []
                 for i in range(0, len(sst_)):
-                    a_.append(sst_[i].isel(time=t).mcsst.values)
+                    a_.append(sst_[i].mcsst.values)
                 temp = np.nanmean(np.dstack((a_)),len(sst_))
-                sst_temp.mcsst.values = temp
+                sst_comb.mcsst.values = temp
                 
-                try:
-                    sst_comb = xr.concat([sst_comb,sst_temp], 'time')
-                except:
-                    sst_comb = sst_temp.copy()
-        else:
 
-            sst_comb = sst_[0].copy()
-            a_ = []
+
+
+
             for i in range(0, len(sst_)):
-                a_.append(sst_[i].mcsst.values)
-            temp = np.nanmean(np.dstack((a_)),len(sst_))
-            sst_comb.mcsst.values = temp
+                name_ = 'mcsst_source'+str(i+1)
+                sst_comb[name_] = sst_[i].mcsst
+            
             
 
+        else:
+            sst_comb = sst_[0].copy()
 
+    elif area=='global':
 
+        for i in range(0,len(sst_)):
+            
+            try:
+                sst_comb = xr.concat([sst_comb,sst_[i]], 'time')
+            except:
+                sst_comb = sst_[i].copy()
 
-        for i in range(0, len(sst_)):
-            name_ = 'mcsst_source'+str(i+1)
-            sst_comb[name_] = sst_[i].mcsst
-        
-        
-
-    else:
-        sst_comb = sst_[0].copy()
     
+    else:
+
+        print('wrong area name')
 
     return sst_comb
 
