@@ -1,0 +1,16 @@
+# .yml file to create the pysst environment
+
+name: pysst
+
+channels:
+  - conda-forge
+
+dependencies:
+  - python
+  - cdo 
+  - cartopy 
+  - pip:
+    - build
+    - nctoolkit=0.9.4
+    
+

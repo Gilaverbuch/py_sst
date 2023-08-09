@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Python module to read the .D binary data files
+Python module to read sea surface temperature
 
 .. module:: py sea surface temperature
 
