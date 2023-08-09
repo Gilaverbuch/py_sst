@@ -3,20 +3,13 @@ Python tool to download Sea Surface Temperature.
 Mid-Atlantic (1km X 1km) is retrieved from http://basin.ceoe.udel.edu/thredds ,  http://tds.maracoos.org/thredds/ , 
 Global data (4kn X 4km) is retrieved from https://www.ncei.noaa.gov/products/avhrr-pathfinder-sst 
 
-In a conda environment run:
+In terminal run:
 
-- conda install python 
+- conda env create -f pysst.yml
 
-- pip install build (A simple, correct PEP 517 build frontend. It will build the .whl and .tar.gz for the pip install)
+This command will create the pysst environment. Then run:
 
-For some reason the nctoolkit, cdo, and cartopy are not installed properly via pip install .whl, so please install the separately. 
-
-- pip install nctoolkit==0.9.4
-
-- conda install -c conda-forge cdo
-
-- conda install -c conda-forge cartopy
-
+- conda activate pysst
 
 cd to the package directory and run:
 
@@ -27,10 +20,14 @@ cd to the package directory and run:
 
 
 Dependencies:
+- python
+- numpy
+- matplotlib
+- jupyter Notebook
+- xarray
+- build
+- nctoolkit
+- cdo
+- cartopy
 
-- Numpy
-- Matplotlib
-- Jupyter Notebook
-- Xarray
-
-** pip install should install them automatically.
+* They are all installed in the process described above.
