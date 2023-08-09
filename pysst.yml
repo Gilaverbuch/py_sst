@@ -9,8 +9,9 @@ dependencies:
   - python
   - cdo 
   - cartopy 
+  - pip
   - pip:
     - build
-    - nctoolkit=0.9.4
-    
+    - nctoolkit==0.9.4
+
 
