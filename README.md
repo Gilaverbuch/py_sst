@@ -1,5 +1,5 @@
 # pysst
-Python tool to download Sea Surface Temperature. 
+Python tool to download sattelite (AVHRR) Sea Surface Temperature data. 
 Mid-Atlantic (1km X 1km) is retrieved from http://basin.ceoe.udel.edu/thredds ,  http://tds.maracoos.org/thredds/ , 
 Global data (4km X 4km) is retrieved from https://www.ncei.noaa.gov/products/avhrr-pathfinder-sst 
 
